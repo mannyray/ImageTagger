@@ -23,7 +23,6 @@ for( img in images){
 	break;
 }
 
-
 var requestOptions = {
 	method: 'POST',
 	headers: { 'Content-Type': 'application/json' },
@@ -35,6 +34,7 @@ const App = () => {
   const [state, setState] = useState('');
   const [value, setValue] = useState('');
   const [tags, setTags] = useState([]);
+  const [uniqueTags, setUniqueTags] = useState([]);
   const [image_viewed, setImage_viewed] = useState(first_image);
 
   const handler = (event) => {
@@ -72,6 +72,14 @@ const App = () => {
 		};
 		fetch('http://127.0.0.1:5000/tag_for_image', requestOptions).then(res => res.json()).then(res => setTags(res));
 		setState('');
+
+
+		var requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ })
+		};
+		fetch('http://127.0.0.1:5000/get_unique_tags', requestOptions).then(res => res.json()).then(res => setUniqueTags(res))
 	}
 	if(string === 'b'){
 		index = index - 1;
@@ -96,6 +104,13 @@ const App = () => {
 		};
 		fetch('http://127.0.0.1:5000/tag_for_image', requestOptions).then(res => res.json()).then(res => setTags(res));
 		setState('');
+
+		var requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ })
+		};
+		fetch('http://127.0.0.1:5000/get_unique_tags', requestOptions).then(res => res.json()).then(res => setUniqueTags(res))
 	}
 	else{
 		var arrs = tags;
@@ -126,9 +141,11 @@ const App = () => {
 		setState('')
 	}
 
+	var delExists = false;
 	const items = []
 	for(const item of tags){
-		if(item === 'boop'){
+		if(item === 'd'){
+			delExists = true;
 			items.push(<li class='red'>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
 		}
 		else{
@@ -137,24 +154,61 @@ const App = () => {
 	}
 
 
-    
-  return (
-    <div>
-      <h1>Image sorter</h1>
-        
-	  <Image
-	    source={{uri: process.env.PUBLIC_URL + '/'+image_viewed}}
-	    style={{ width: 1800, height: 1000}}
-	    resizeMode="contain"
-	   />
-        <p>Last tag: {state}</p>
-	<input type="text" value={value}  onKeyPress={(e) => handler(e)}  autofocus="autofocus" />
-	<h2>Tags:</h2>
-	<ul>
-	{items}
-	</ul>
-    </div>
-  );
+	const visualTagsItems = []
+	for(const item of uniqueTags){
+		visualTagsItems.push(<option value={item}>{item}</option>)
+	}
+
+
+
+  if(delExists){ 
+	  return (
+	    <div style={{color: "red"}}>
+		  <select name="cars" id="cars">
+		  {visualTagsItems}
+		  </select>
+	      <h1>Image sorter</h1>
+		  <Image
+		    source={{uri: process.env.PUBLIC_URL + '/'+image_viewed}}
+		    style={{ width: 1800, height: 1000   }}
+		    resizeMode="contain"
+		   />
+		<p>Last tag: {state}</p>
+		<input type="text" value={value}  onKeyPress={(e) => handler(e)}  autofocus="autofocus" />
+		<div>
+			<h2>Tags:</h2>
+			<ul>
+			{items}
+			</ul>
+		</div>
+	    </div>
+	  );
+  }
+  else{
+	  return (
+	    <div>
+		  <select name="cars" id="cars">
+		  {visualTagsItems}
+		  </select>
+	      <div style={{ float:'left' }}>
+	      <h1>Image sorter</h1>
+		  <Image
+		    source={{uri: process.env.PUBLIC_URL + '/'+image_viewed}}
+		    style={{ width: 1500, height: 1000 }}
+		    resizeMode="contain"
+		   />
+		<p>Last tag: {state}</p>
+		<input type="text" value={value}  onKeyPress={(e) => handler(e)}  autofocus="autofocus" />
+		</div>
+		<div style={{ float:'right',width:'1600px'  }}>
+			<h2>Tags:</h2>
+			<ul>
+			{items}
+			</ul>
+		</div>
+	    </div>
+	  );
+  }
 };
   
 export default App;
