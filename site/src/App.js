@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { Image } from "react-native";
+//import { Image } from "react-native";
+import { Image, Dimensions } from 'react-native';
+//import ImageZoom from 'react-native-image-pan-zoom';
+//import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
+import InnerImageZoom from 'react-inner-image-zoom';
 
 var string = '';
 var index = 0;
@@ -39,7 +43,7 @@ const App = () => {
 
   const handler = (event) => {
     if(event.key === 'Enter'){
-	if(string === 'save'){
+	if(string === 's'){
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -48,7 +52,22 @@ const App = () => {
 	    fetch('http://127.0.0.1:5000/tags', requestOptions);
 	    setTags([]);
 	    setState('');
+	    string = 'n';
 	}
+
+	if(string === 'd'){
+		const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ image_name:image_viewed,tags:['d'] })
+		    };
+	    fetch('http://127.0.0.1:5000/tags', requestOptions);
+	    setTags([]);
+	    setState('');
+	    string = 'n';
+	}
+
+
 	if(string === 'n'){
 		index = index + 1;
 		if(index === image_length){
@@ -162,20 +181,24 @@ const App = () => {
 
 
   if(delExists){ 
+	
 	  return (
 	    <div style={{color: "red"}}>
 		  <select name="cars" id="cars">
 		  {visualTagsItems}
 		  </select>
-	      <h1>Image sorter</h1>
-		  <Image
-		    source={{uri: process.env.PUBLIC_URL + '/'+image_viewed}}
-		    style={{ width: 1800, height: 1000   }}
-		    resizeMode="contain"
-		   />
+	      <h1>Image sorter|(code|text|tag|img)</h1>
+	      <div style={{ float:'left' }} class="container">
+		  <InnerImageZoom
+			src={image_viewed}
+		  	width={1500}
+		  	height={1000}
+		  	zoomScale={0.41}
+		  />
 		<p>Last tag: {state}</p>
 		<input type="text" value={value}  onKeyPress={(e) => handler(e)}  autofocus="autofocus" />
-		<div>
+		</div>
+		<div style={{ float:'right',width:'1600px'  }}>
 			<h2>Tags:</h2>
 			<ul>
 			{items}
@@ -183,20 +206,28 @@ const App = () => {
 		</div>
 	    </div>
 	  );
+
   }
   else{
+
+		  /*<Image
+		    source={{uri: process.env.PUBLIC_URL + '/'+image_viewed}}
+		    style={{ width: 1500, height: 1000 }}
+		    resizeMode="contain"
+		   />*/
 	  return (
 	    <div>
 		  <select name="cars" id="cars">
 		  {visualTagsItems}
 		  </select>
-	      <div style={{ float:'left' }}>
-	      <h1>Image sorter</h1>
-		  <Image
-		    source={{uri: process.env.PUBLIC_URL + '/'+image_viewed}}
-		    style={{ width: 1500, height: 1000 }}
-		    resizeMode="contain"
-		   />
+	      <h1>Image sorter|(code|text|tag|img)</h1>
+	      <div style={{ float:'left' }} class="container">
+		  <InnerImageZoom
+			src={image_viewed}
+		  	width={1500}
+		  	height={1000}
+		  	zoomScale={0.41}
+		  />
 		<p>Last tag: {state}</p>
 		<input type="text" value={value}  onKeyPress={(e) => handler(e)}  autofocus="autofocus" />
 		</div>
