@@ -17,11 +17,15 @@ function importAll(r) {
   return images;
 }
 
+
 images = importAll(require.context('../public', false, /\.(JPG)$/));
 var image_length = 0;
 for(var img in images){
 	image_length = image_length + 1;
 }
+var image_index = 0;
+
+
 for( img in images){
 	first_image = img;
 	break;
@@ -66,6 +70,7 @@ const App = () => {
 	    setState('');
 	    string = 'n';
 	}
+
 
 
 	if(string === 'n'){
@@ -167,6 +172,18 @@ const App = () => {
 			delExists = true;
 			items.push(<li class='red'>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
 		}
+		else if( item.startsWith('tag')){
+			items.push(<li class='blue'>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
+		}
+		else if( item.startsWith('img')){
+			items.push(<li class='green'>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
+		}
+		else if( item.startsWith('code')){
+			items.push(<li class='yellow'>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
+		}
+		else if( item.startsWith('text')){
+			items.push(<li class='purple'>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
+		}
 		else{
 			items.push(<li class='regular'>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
 		}
@@ -187,7 +204,7 @@ const App = () => {
 		  <select name="cars" id="cars">
 		  {visualTagsItems}
 		  </select>
-	      <h1>Image sorter|(code|text|tag|img)</h1>
+	      <h1>Image sorter|(code|text|tag|img|year|unknown|good|message) {image_viewed} {index+1}/{image_length}</h1>
 	      <div style={{ float:'left' }} class="container">
 		  <InnerImageZoom
 			src={image_viewed}
@@ -209,18 +226,12 @@ const App = () => {
 
   }
   else{
-
-		  /*<Image
-		    source={{uri: process.env.PUBLIC_URL + '/'+image_viewed}}
-		    style={{ width: 1500, height: 1000 }}
-		    resizeMode="contain"
-		   />*/
 	  return (
 	    <div>
 		  <select name="cars" id="cars">
 		  {visualTagsItems}
 		  </select>
-	      <h1>Image sorter|(code|text|tag|img)</h1>
+	      <h1>Image sorter|(code|text|tag|img|year|unknown|good|message) {image_viewed}  {index+1}/{image_length}</h1>
 	      <div style={{ float:'left' }} class="container">
 		  <InnerImageZoom
 			src={image_viewed}
