@@ -21,8 +21,14 @@ for file in os.listdir("site/public"):
     if file in tags:
         root = file[0:file.index('.')]
         if 'd' in tags[file]:
-            shutil.move("site/public/"+root+".JPG", "site/public/deleted/"+root+".JPG")
-            shutil.move("site/public/"+root+".CR3", "site/public/deleted/"+root+".CR3")
+            try:
+                shutil.move("site/public/"+root+".JPG", "site/public/deleted/"+root+".JPG")
+                shutil.move("site/public/"+root+".CR3", "site/public/deleted/"+root+".CR3")
+            except:
+                print('failed moving '+str(file)+' to deleted')
         else:
-            shutil.move("site/public/"+root+".JPG", "site/public/"+date_time+"/"+root+".JPG")
-            shutil.move("site/public/"+root+".CR3", "site/public/"+date_time+"/"+root+".CR3")
+            try:
+                shutil.move("site/public/"+root+".JPG", "site/public/"+date_time+"/"+root+".JPG")
+                shutil.move("site/public/"+root+".CR3", "site/public/"+date_time+"/"+root+".CR3")
+            except:
+                print('failed moving '+str(file)+' to deleted')
