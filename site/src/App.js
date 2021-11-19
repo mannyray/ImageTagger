@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-//import { Image } from "react-native";
+import { Component } from 'react';
 import { Image, Dimensions } from 'react-native';
-//import ImageZoom from 'react-native-image-pan-zoom';
-//import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 import InnerImageZoom from 'react-inner-image-zoom';
+import ScrollContainer from 'react-indiana-drag-scroll';
+import  useWindowDimensions from './windows.js';
 
 var string = '';
 var index = 0;
@@ -38,12 +38,15 @@ var requestOptions = {
     };
 var first_tags = fetch('http://127.0.0.1:5000/tag_for_image', requestOptions).then(res => res.json()).then(res => console.log(res));
 
+
 const App = () => {
   const [state, setState] = useState('');
   const [value, setValue] = useState('');
   const [tags, setTags] = useState([]);
   const [uniqueTags, setUniqueTags] = useState([]);
   const [image_viewed, setImage_viewed] = useState(first_image);
+
+  const { height, width } = useWindowDimensions();
 
   const handler = (event) => {
     if(event.key === 'Enter'){
@@ -196,61 +199,36 @@ const App = () => {
 	}
 
 
-
-  if(delExists){ 
-	
-	  return (
-	    <div style={{color: "red"}}>
-		  <select name="cars" id="cars">
-		  {visualTagsItems}
-		  </select>
-	      <h1>Image sorter|(code|text|tag|img|year|unknown|good|message) {image_viewed} {index+1}/{image_length}</h1>
-	      <div style={{ float:'left' }} class="container">
-		  <InnerImageZoom
-			src={image_viewed}
-		  	width={1500}
-		  	height={1000}
-		  	zoomScale={0.41}
-		  />
-		<p>Last tag: {state}</p>
-		<input type="text" value={value}  onKeyPress={(e) => handler(e)}  autofocus="autofocus" />
+	var colorIfDeleted = 'black';
+		if(delExists){
+		colorIfDeleted = 'red';
+	}
+	return (
+		<div style={{float:'left',color:colorIfDeleted}}>
+			<div>
+				<select name="cars" id="cars">
+					{visualTagsItems}
+				</select>
+				<h1>Image sorter|(code|text|tag|img|year|unknown|good|message) {image_viewed}  {index+1}/{image_length} </h1>
+				<div style={{ float:'left', display:'flex' }} class="container">
+					<img src={image_viewed} style={{height:height*0.7}}/>
+					<ScrollContainer style={{height:height*0.7,width:'1600px'}} hideScrollbars={false} className='scroll-container'>
+						<img src={image_viewed} style={{height:height}} />
+					</ScrollContainer>
+				</div>
+			</div>
+			<div style={{}}>
+				<p>Enter Tag: {state}</p>
+				<input type="text" value={value}  onKeyPress={(e) => handler(e)}  autofocus="autofocus" />
+			</div>
+			<div style={{ float:'left',width: width*0.5  }}>
+				<h2>Tags:</h2>
+				<ul>
+					{items}
+				</ul>
+			</div>
 		</div>
-		<div style={{ float:'right',width:'1600px'  }}>
-			<h2>Tags:</h2>
-			<ul>
-			{items}
-			</ul>
-		</div>
-	    </div>
-	  );
-
-  }
-  else{
-	  return (
-	    <div>
-		  <select name="cars" id="cars">
-		  {visualTagsItems}
-		  </select>
-	      <h1>Image sorter|(code|text|tag|img|year|unknown|good|message) {image_viewed}  {index+1}/{image_length}</h1>
-	      <div style={{ float:'left' }} class="container">
-		  <InnerImageZoom
-			src={image_viewed}
-		  	width={1500}
-		  	height={1000}
-		  	zoomScale={0.41}
-		  />
-		<p>Last tag: {state}</p>
-		<input type="text" value={value}  onKeyPress={(e) => handler(e)}  autofocus="autofocus" />
-		</div>
-		<div style={{ float:'right',width:'1600px'  }}>
-			<h2>Tags:</h2>
-			<ul>
-			{items}
-			</ul>
-		</div>
-	    </div>
-	  );
-  }
+	);
 };
-  
+
 export default App;

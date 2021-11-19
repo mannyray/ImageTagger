@@ -62,11 +62,12 @@ flask run
 Backend:
  - rename hello.py and improperly methods within
  - Upon load up, allow ability to load all the tags for searching process (autofill)
- - If front end requests an image the send it to front end
- - better date convention
+ - If front end requests an image the send it to front end (either low res or high res)
  - saving an image from front end
-   * place it by date
+   * place it by date folder (fix to YYYY-MM-DD convention)
+      * does that mean you have to check the date all the time?
    * create a low resolution version
+   * image needs a _key_ which will be the combination of file name and the date of processing
 
 Config file:
  - directory of where the high resolution images are stored (in case limited memory in computer) like a nas server
@@ -74,11 +75,13 @@ Config file:
  - specify the defaul tags for suggested tags
 
 Front end:
- - Make image take up entire screen
- - Have a zoom feature that does not depend on full screen size
+ - ~~Make image take up entire screen~~
+ - ~~Have a zoom feature that does not depend on full screen size~~
+ - Hyper link to see full size image
  - Place tagging search bar in a better place
+ - basic on screen instructions
  - Ability to upload pictures upon 'saving' to backend along with its tags
  - New page (through new path): for searching through tags
    * Search bar for tags (with autofill feature)
-   * Load images that pop up (make sure we don't overwhelm backend)
+   * Load images that pop up that are searched for (make sure we don't overwhelm backend)
    * Allow ability to view resultant image in new tab full resolution 
