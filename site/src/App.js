@@ -38,89 +38,89 @@ const json = JSON.parse(loadedData);
 const colour_coding = json['colour_coding'];
 
 const App = () => {
-  const [state, setState] = useState('');
-  const [value, setValue] = useState('');
-  const [tags, setTags] = useState([]);
-  const [uniqueTags, setUniqueTags] = useState([]);
-  const [image_viewed, setImage_viewed] = useState(first_image);
-  const { height, width } = useWindowDimensions();
+	const [state, setState] = useState('');
+	const [value, setValue] = useState('');
+	const [tags, setTags] = useState([]);
+	const [uniqueTags, setUniqueTags] = useState([]);
+	const [image_viewed, setImage_viewed] = useState(first_image);
+	const { height, width } = useWindowDimensions();
 
-  const handler = (event) => {
-    if(event.key === 'Enter'){
-	if(string === 's'){
-		const requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ image_name:image_viewed,tags:tags })
-		    };
-	    fetch(url_backend+'/tags', requestOptions);
-	    setTags([]);
-	    setState('');
-	    string = 'n';
-	}
-	if(string === 'd'){
-		const requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ image_name:image_viewed,tags:['d'] })
-		    };
-	    fetch(url_backend+'/tags', requestOptions);
-	    setTags([]);
-	    setState('');
-	    string = 'n';
-	}
-	if(string === 'n' || string === 'b'){
-		if(string === 'n'){
-			index = index + 1;
-			if(index === image_length){
-				index = 0;
+	const handler = (event) => {
+		if(event.key === 'Enter'){
+			if(string === 's'){
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ image_name:image_viewed,tags:tags })
+				};
+				fetch(url_backend+'/tags', requestOptions);
+				setTags([]);
+				setState('');
+				string = 'n';
+			}
+			if(string === 'd'){
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ image_name:image_viewed,tags:['d'] })
+				};
+				fetch(url_backend+'/tags', requestOptions);
+				setTags([]);
+				setState('');
+				string = 'n';
+			}
+			if(string === 'n' || string === 'b'){
+				if(string === 'n'){
+					index = index + 1;
+					if(index === image_length){
+						index = 0;
+					}
+				}
+				else{
+					index = index - 1;
+					if(index === -1 ){
+						index = image_length -1;
+					}
+				}
+				var local_index = 0;
+				var selected_image = ''; 
+				for(var img in images){
+					selected_image = img;
+					if(local_index === index){
+						break;
+					}
+					local_index = local_index + 1;
+				}
+				setImage_viewed(selected_image);
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ image_name:selected_image })
+				};
+				fetch(url_backend+'/tag_for_image', requestOptions).then(res => res.json()).then(res => setTags(res));
+				setState('');
+			}
+			else{
+				console.log("ddd");
+				var arrs = tags;
+				arrs.push(string);
+				setTags(tags);
+				setState(string);
+			}
+			setValue('');
+			string = '';
+		}
+		else if(event.key === '='){
+			if(string !== ''){
+				string = ''
+				setValue(string)
 			}
 		}
 		else{
-			index = index - 1;
-			if(index === -1 ){
-				index = image_length -1;
-			}
+			string = string + event.key
+			setValue(string)
 		}
-		var local_index = 0;
-		var selected_image = ''; 
-		for(var img in images){
-			selected_image = img;
-			if(local_index === index){
-				break;
-			}
-			local_index = local_index + 1;
-		}
-		setImage_viewed(selected_image);
-		const requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ image_name:selected_image })
-		};
-		fetch(url_backend+'/tag_for_image', requestOptions).then(res => res.json()).then(res => setTags(res));
-		setState('');
-	}
-	else{
-		console.log("ddd");
-		var arrs = tags;
-		arrs.push(string);
-		setTags(tags);
-		setState(string);
-	}
-	setValue('');
-	string = '';
-    }
-    else if(event.key === '='){
-	if(string !== ''){
-		string = ''
-		setValue(string)
-	}
-   }	
-   else{
-	string = string + event.key
-	setValue(string)
-    }
-  };
+	};
 
 	function handleCross(e){
 		var arr = tags.filter(function(item) {
