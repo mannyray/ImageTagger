@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Component } from 'react';
+import {TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Image, Dimensions } from 'react-native';
-import InnerImageZoom from 'react-inner-image-zoom';
-import ScrollContainer from 'react-indiana-drag-scroll';
 import  useWindowDimensions from './windows.js';
+import configuration from "./config.json";
 
 var string = '';
 var index = 0;
@@ -17,27 +17,25 @@ function importAll(r) {
   return images;
 }
 
-
 images = importAll(require.context('../public', false, /\.(JPG)$/));
+const url_backend='http://127.0.0.1:5000';
+
 var image_length = 0;
 for(var img in images){
 	image_length = image_length + 1;
 }
 var image_index = 0;
-
-
 for( img in images){
 	first_image = img;
 	break;
 }
 
-var requestOptions = {
-	method: 'POST',
-	headers: { 'Content-Type': 'application/json' },
-	body: JSON.stringify({ image_name:first_image })
-    };
-var first_tags = fetch('http://127.0.0.1:5000/tag_for_image', requestOptions).then(res => res.json()).then(res => console.log(res));
+var combos = ["'n'+'Enter'","'b'+'Enter'","'s'+'Enter'","'d'+'Enter'","'='"];
+var combos_action = ["Go to next image","Go to previous image.","Save image to database.","Delete the image.","Clear current info in bar"];
 
+const loadedData = JSON.stringify(configuration);
+const json = JSON.parse(loadedData);
+const colour_coding = json['colour_coding'];
 
 const App = () => {
   const [state, setState] = useState('');
@@ -45,7 +43,6 @@ const App = () => {
   const [tags, setTags] = useState([]);
   const [uniqueTags, setUniqueTags] = useState([]);
   const [image_viewed, setImage_viewed] = useState(first_image);
-
   const { height, width } = useWindowDimensions();
 
   const handler = (event) => {
@@ -56,30 +53,34 @@ const App = () => {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ image_name:image_viewed,tags:tags })
 		    };
-	    fetch('http://127.0.0.1:5000/tags', requestOptions);
+	    fetch(url_backend+'/tags', requestOptions);
 	    setTags([]);
 	    setState('');
 	    string = 'n';
 	}
-
 	if(string === 'd'){
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ image_name:image_viewed,tags:['d'] })
 		    };
-	    fetch('http://127.0.0.1:5000/tags', requestOptions);
+	    fetch(url_backend+'/tags', requestOptions);
 	    setTags([]);
 	    setState('');
 	    string = 'n';
 	}
-
-
-
-	if(string === 'n'){
-		index = index + 1;
-		if(index === image_length){
-			index = 0;
+	if(string === 'n' || string === 'b'){
+		if(string === 'n'){
+			index = index + 1;
+			if(index === image_length){
+				index = 0;
+			}
+		}
+		else{
+			index = index - 1;
+			if(index === -1 ){
+				index = image_length -1;
+			}
 		}
 		var local_index = 0;
 		var selected_image = ''; 
@@ -91,55 +92,16 @@ const App = () => {
 			local_index = local_index + 1;
 		}
 		setImage_viewed(selected_image);
-
-		requestOptions = {
+		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ image_name:selected_image })
 		};
-		fetch('http://127.0.0.1:5000/tag_for_image', requestOptions).then(res => res.json()).then(res => setTags(res));
+		fetch(url_backend+'/tag_for_image', requestOptions).then(res => res.json()).then(res => setTags(res));
 		setState('');
-
-
-		var requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ })
-		};
-		fetch('http://127.0.0.1:5000/get_unique_tags', requestOptions).then(res => res.json()).then(res => setUniqueTags(res))
-	}
-	if(string === 'b'){
-		index = index - 1;
-		if(index === -1 ){
-			index = image_length -1;
-		}
-		var local_index = 0;
-		selected_image = ''; 
-		for(var img in images){
-			selected_image = img;
-			if(local_index === index){
-				break;
-			}
-			local_index = local_index + 1;
-		}
-		setImage_viewed(selected_image);
-
-		requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ image_name:selected_image })
-		};
-		fetch('http://127.0.0.1:5000/tag_for_image', requestOptions).then(res => res.json()).then(res => setTags(res));
-		setState('');
-
-		var requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ })
-		};
-		fetch('http://127.0.0.1:5000/get_unique_tags', requestOptions).then(res => res.json()).then(res => setUniqueTags(res))
 	}
 	else{
+		console.log("ddd");
 		var arrs = tags;
 		arrs.push(string);
 		setTags(tags);
@@ -162,7 +124,7 @@ const App = () => {
 
 	function handleCross(e){
 		var arr = tags.filter(function(item) {
-		    return item !== e
+			return item !== e
 		})
 		setTags(arr)
 		setState('')
@@ -175,60 +137,87 @@ const App = () => {
 			delExists = true;
 			items.push(<li class='red'>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
 		}
-		else if( item.startsWith('tag')){
-			items.push(<li class='blue'>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
-		}
-		else if( item.startsWith('img')){
-			items.push(<li class='green'>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
-		}
-		else if( item.startsWith('code')){
-			items.push(<li class='yellow'>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
-		}
-		else if( item.startsWith('text')){
-			items.push(<li class='purple'>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
-		}
 		else{
-			items.push(<li class='regular'>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
+			console.log(item);
+			var specialTag = false;
+			for(const coding in colour_coding){
+				const code = colour_coding[coding];
+				if( item.startsWith(code['start_word'])){
+					items.push(<li class='regular' style={{backgroundColor:code['colour']}}>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
+					specialTag = true;
+					break;
+				}
+			}
+			if( specialTag === false ){
+				items.push(<li class='regular' style={{backgroundColor:"#f6f6f6"}}>{item}<span class='close' onClick={() => handleCross(item)}>x</span></li>)
+			}
 		}
+
 	}
 
-
-	const visualTagsItems = []
-	for(const item of uniqueTags){
-		visualTagsItems.push(<option value={item}>{item}</option>)
+	var instructions_items = [];
+	for(var i=0; i<combos.length; i++){
+		instructions_items.push(<tr><td style={{border:'1px solid'}}>{combos[i]}</td><td style={{border:'1px solid'}}>{combos_action[i]}</td></tr>);
 	}
 
+	var colour_instructions = [];
+	for(var i=0; i<colour_coding.length; i++){
+		colour_instructions.push(<tr><td style={{backgroundColor:colour_coding[i]['colour']}}>{colour_coding[i]['start_word']}</td></tr>);
+	}
 
 	var colorIfDeleted = 'black';
 		if(delExists){
 		colorIfDeleted = 'red';
 	}
+
 	return (
 		<div style={{float:'left',color:colorIfDeleted}}>
 			<div>
-				<select name="cars" id="cars">
-					{visualTagsItems}
-				</select>
-				<h1>Image sorter|(code|text|tag|img|year|unknown|good|message) {image_viewed}  {index+1}/{image_length} </h1>
 				<div style={{ float:'left', display:'flex' }} class="container">
-					<img src={image_viewed} style={{height:height*0.7}}/>
-					<ScrollContainer style={{height:height*0.7,width:'1600px'}} hideScrollbars={false} className='scroll-container'>
-						<img src={image_viewed} style={{height:height}} />
-					</ScrollContainer>
+					<TransformWrapper>
+						<TransformComponent>
+							<img src={image_viewed} style={{height:height*0.7}} alt="test" />
+						</TransformComponent>
+					</TransformWrapper>
+					<div style={{ float:'left'  }}>
+						<h1>Image: {image_viewed}</h1>
+						<h1>Progress: {index+1}/{image_length}</h1>
+						<h1>Image Path:</h1>
+						<input type="text" style={{width:'300px'}}/>
+						<h1>Save folder:</h1>
+						<input type="text" style={{width:'300px'}}/>
+					</div>
+					<div style={{width:'10px'}}></div>
+					<div style={{width:width*0.15}}>
+						<h1>Tags:</h1>
+						<ul>
+							{items}
+						</ul>
+					</div>
 				</div>
 			</div>
-			<div style={{}}>
-				<p>Enter Tag: {state}</p>
-				<input type="text" value={value}  onKeyPress={(e) => handler(e)}  autofocus="autofocus" />
-			</div>
-			<div style={{ float:'left',width: width*0.5  }}>
-				<h2>Tags:</h2>
-				<ul>
-					{items}
-				</ul>
+			<div style={{float:'left',display:'flex'}}>
+				<div>
+					<h1>Enter Tag:</h1>
+					<input type="text"  value={value}  onKeyPress={(e) => handler(e)}  autofocus="autofocus" />
+				</div>
+				<table style={{border:'1px solid'}}>
+					<tr style={{border:'1px solid'}}>
+						<td style={{border:'1px solid'}}><b>Reserved Combos</b></td>
+						<td style={{border:'1px solid'}}><b>Action</b></td>
+					</tr>
+					{instructions_items}
+				</table>
+				<div>
+					<table style={{border:'1px solid'}}>
+						<tr style={{border:'1px solid'}}>
+							<td style={{border:'1px solid'}}><b>Reserved Starting Words</b></td>
+						</tr>
+						{colour_instructions}
+					</table>
+				</div>
 			</div>
 		</div>
 	);
 };
-
 export default App;

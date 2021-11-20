@@ -72,14 +72,17 @@ Backend:
 Config file:
  - directory of where the high resolution images are stored (in case limited memory in computer) like a nas server
  - directory of where the local low resolution are stored along with the tags
- - specify the defaul tags for suggested tags
+ - ~~specify the defaul tags for suggested tags~~
 
 Front end:
  - ~~Make image take up entire screen~~
  - ~~Have a zoom feature that does not depend on full screen size~~
- - Hyper link to see full size image
- - Place tagging search bar in a better place
- - basic on screen instructions
+ - ~~Hyper link to see full size image(don't need that as current zoom feature good enough)~~
+ - ~~set variable for 127.0.0.1:5000~~
+ - ~~tab out code~~
+ - ~~Place tagging search bar in a better place~~
+ - ~~basic on screen instructions including tagging guide lines~~
+ - Create a scroll bar to get to next images faster
  - Ability to upload pictures upon 'saving' to backend along with its tags
  - New page (through new path): for searching through tags
    * Search bar for tags (with autofill feature)
