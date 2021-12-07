@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Component } from 'react';
 import {TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Image, Dimensions } from 'react-native';
 import  useWindowDimensions from './windows.js';
+import ReactDOM from 'react-dom';
 import configuration from "./config.json";
+import ImageComponent from './ImageComponent';
+import Search from './Search';
+
+
 
 var string = '';
 var index = 0;
@@ -19,6 +25,7 @@ function importAll(r) {
 
 images = importAll(require.context('../public', false, /\.(JPG)$/));
 const url_backend='http://127.0.0.1:5000';
+const url_search_backend='http://127.0.0.1:5001';
 
 var image_length = 0;
 for(var img in images){
@@ -171,53 +178,64 @@ const App = () => {
 	}
 
 	return (
-		<div style={{float:'left',color:colorIfDeleted}}>
-			<div>
-				<div style={{ float:'left', display:'flex' }} class="container">
-					<TransformWrapper>
-						<TransformComponent>
-							<img src={image_viewed} style={{height:height*0.7}} alt="test" />
-						</TransformComponent>
-					</TransformWrapper>
-					<div style={{ float:'left'  }}>
-						<h1>Image: {image_viewed}</h1>
-						<h1>Progress: {index+1}/{image_length}</h1>
-						<h1>Image Path:</h1>
-						<input type="text" style={{width:'300px'}}/>
-						<h1>Save folder:</h1>
-						<input type="text" style={{width:'300px'}}/>
+		<BrowserRouter>
+			<Switch>
+				<Route path="/search">
+					<div>
+						<Search height={height} width={width}/>
 					</div>
-					<div style={{width:'10px'}}></div>
-					<div style={{width:width*0.15}}>
-						<h1>Tags:</h1>
-						<ul>
-							{items}
-						</ul>
+				</Route>
+				<Route path ="/">
+					<div style={{float:'left',color:colorIfDeleted}}>
+						<div>
+							<div style={{ float:'left', display:'flex' }} class="container">
+								<TransformWrapper>
+									<TransformComponent>
+										<img src={image_viewed} style={{height:height*0.7}} alt="test" />
+									</TransformComponent>
+								</TransformWrapper>
+								<div style={{ float:'left'  }}>
+									<h1>Image: {image_viewed}</h1>
+									<h1>Progress: {index+1}/{image_length}</h1>
+									<h1>Image Path:</h1>
+									<input type="text" style={{width:'300px'}}/>
+									<h1>Save folder:</h1>
+									<input type="text" style={{width:'300px'}}/>
+								</div>
+								<div style={{width:'10px'}}></div>
+								<div style={{width:width*0.15}}>
+									<h1>Tags:</h1>
+									<ul>
+										{items}
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div style={{float:'left',display:'flex'}}>
+							<div>
+								<h1>Enter Tag:</h1>
+								<input type="text"  value={value}  onKeyPress={(e) => handler(e)}  autofocus="autofocus" />
+							</div>
+							<table style={{border:'1px solid'}}>
+								<tr style={{border:'1px solid'}}>
+									<td style={{border:'1px solid'}}><b>Reserved Combos</b></td>
+									<td style={{border:'1px solid'}}><b>Action</b></td>
+								</tr>
+								{instructions_items}
+							</table>
+							<div>
+								<table style={{border:'1px solid'}}>
+									<tr style={{border:'1px solid'}}>
+										<td style={{border:'1px solid'}}><b>Reserved Starting Words</b></td>
+									</tr>
+									{colour_instructions}
+								</table>
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
-			<div style={{float:'left',display:'flex'}}>
-				<div>
-					<h1>Enter Tag:</h1>
-					<input type="text"  value={value}  onKeyPress={(e) => handler(e)}  autofocus="autofocus" />
-				</div>
-				<table style={{border:'1px solid'}}>
-					<tr style={{border:'1px solid'}}>
-						<td style={{border:'1px solid'}}><b>Reserved Combos</b></td>
-						<td style={{border:'1px solid'}}><b>Action</b></td>
-					</tr>
-					{instructions_items}
-				</table>
-				<div>
-					<table style={{border:'1px solid'}}>
-						<tr style={{border:'1px solid'}}>
-							<td style={{border:'1px solid'}}><b>Reserved Starting Words</b></td>
-						</tr>
-						{colour_instructions}
-					</table>
-				</div>
-			</div>
-		</div>
+				</Route>
+			</Switch>
+		</BrowserRouter>
 	);
 };
 export default App;
