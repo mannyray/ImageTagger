@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 
 const url_search_backend='http://127.0.0.1:5001';
 
-export default function ImageComponent({height,width,path,closeFunction}){
+export default function ImageComponent({height,width,path,pinFunction,color}){
 	const [dragState, setDragState] = useState({activeDrags: 0, deltaPosition: { x: 0, y: 0 }, controlledPosition: {x: -400, y: 200  }})
 	const onStart = () => { setDragState({activeDrags: ++dragState.activeDrags});};
 	const onStop = () => { setDragState({activeDrags: --dragState.activeDrags});};
@@ -17,8 +17,11 @@ export default function ImageComponent({height,width,path,closeFunction}){
 
 
 	function close(name){
-		//closeFunction(name);
 		setVisibilityStatus(['hidden','none']);
+	}
+
+	function pin(name){
+		pinFunction(name);
 	}
 
 	function onLoadedTags( data ){
@@ -53,7 +56,7 @@ export default function ImageComponent({height,width,path,closeFunction}){
 	return(
 		<div>
 			<Draggable {...dragHandlers}>
-				<div style={{border:'5px solid black', width:width*0.2, visibility:visibilityStatus[0], display:visibilityStatus[1] }}>
+				<div style={{border:'5px solid black', backgroundColor:color, width:width*0.2, visibility:visibilityStatus[0], display:visibilityStatus[1] }}>
 					<details>
 						<summary>
 							{title}
@@ -63,6 +66,7 @@ export default function ImageComponent({height,width,path,closeFunction}){
 								</div>
 								<div style={{marginLeft:'auto',marginRight:0}}>
 									<button onClick={close}>X</button>
+									<button onClick={pin}>PIN</button>
 								</div>
 							</div>
 						</summary>
