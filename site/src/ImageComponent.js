@@ -3,16 +3,43 @@ import Draggable, {DraggableCore} from 'react-draggable';
 import ReactDOM from 'react-dom';
 
 const url_search_backend='http://127.0.0.1:5001';
-var returned = false;
 
-export default function ImageComponent({height,width,path}){
+export default function ImageComponent({height,width,path,closeFunction}){
 	const [dragState, setDragState] = useState({activeDrags: 0, deltaPosition: { x: 0, y: 0 }, controlledPosition: {x: -400, y: 200  }})
 	const onStart = () => { setDragState({activeDrags: ++dragState.activeDrags});};
 	const onStop = () => { setDragState({activeDrags: --dragState.activeDrags});};
 	const dragHandlers = {onStart: onStart, onStop: onStop};
 
-	const [tagState, setTagState] = useState([])
+	const [tagState, setTagState] = useState([]);
+	const [tagButtons, setTagButtons] = useState([]);
+	const [title, setTitle] = useState('');
+	const [visibilityStatus, setVisibilityStatus] = useState(['visible','nonce']);
 
+
+	function close(name){
+		//closeFunction(name);
+		setVisibilityStatus(['hidden','none']);
+	}
+
+	function onLoadedTags( data ){
+		var buttons = [];
+		setTagState(data);
+		var foundCode = false;
+		for(var i=0; i<data.length; i++){
+			if( data[i].length > 4 && data[i].substring(0,4) === 'code' ){
+				setTitle(data[i]);
+				foundCode = true;
+			}
+			else{
+				buttons.push(<button class="button">{data[i]}</button>);
+			}
+		}
+		setTagButtons(buttons);
+		if(foundCode===true){
+			return;
+		}
+		setTitle('unknown');
+	}
 
 	const requestOptions = {
 		method: 'POST',
@@ -20,18 +47,26 @@ export default function ImageComponent({height,width,path}){
 		body: JSON.stringify({ })
 	};
 	useEffect( () => {
-		fetch(url_search_backend+'/get_specific_tags?train='+path, requestOptions).then(res => res.json()).then(res => setTagState(res));
-		returned = true;
+		fetch(url_search_backend+'/get_specific_tags?train='+path, requestOptions).then(res => res.json()).then(res => onLoadedTags(res) );
 	}, []);
 
 	return(
 		<div>
 			<Draggable {...dragHandlers}>
-				<div style={{border:'5px solid black', width:width*0.2}}>
+				<div style={{border:'5px solid black', width:width*0.2, visibility:visibilityStatus[0], display:visibilityStatus[1] }}>
 					<details>
-						<summary>Title</summary>
-						<img src={'http://127.0.0.1:5001/get_specific_image?page=' + path} style={{height:height*0.3}}/>
-						{tagState}
+						<summary>
+							{title}
+							<div style={{display:'flex'}}>
+								<div>
+									{tagButtons}
+								</div>
+								<div style={{marginLeft:'auto',marginRight:0}}>
+									<button onClick={close}>X</button>
+								</div>
+							</div>
+						</summary>
+						<img src={'http://127.0.0.1:5001/get_specific_image?page=' + path} style={{width:width*0.196}}/>
 					</details>
 				</div>
 			</Draggable>
