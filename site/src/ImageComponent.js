@@ -20,8 +20,8 @@ export default function ImageComponent({height,width,path,pinFunction,color}){
 		setVisibilityStatus(['hidden','none']);
 	}
 
-	function pin(name){
-		pinFunction(name);
+	function pin(){
+		pinFunction(path);
 	}
 
 	function onLoadedTags( data ){

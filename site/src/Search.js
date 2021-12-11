@@ -5,6 +5,7 @@ import ImageComponent from './ImageComponent';
 
 
 const url_search_backend='http://127.0.0.1:5001';
+var globalSearchTags = [];
 
 export default class Search extends Component {
 
@@ -12,7 +13,10 @@ export default class Search extends Component {
 		super(props)
 		this.width = this.props.width;
 		this.height = this.props.height;
-		this.state = {value:'',searchTags:[],trainsSearch:[]};
+		this.state = {value:'',searchTags:[],trainsSearch:[],pinnedSearch:[]};
+
+		this.pinImage = this.pinImage.bind(this);
+		this.LoadAllTags = this.LoadAllTags.bind(this);
 
 		this.handler = (event) => {
 			const requestOptions = {
@@ -37,28 +41,43 @@ export default class Search extends Component {
 	}
 
 	pinImage(name){
-		/*var tags = searchTags;
-		for(var i=0; i < tags.length; i++){
-			if(name === searchTags[i]){
-				tags.splice(i,1);
-				continue;	
+		console.log('ddd');
+		console.log(name);
+		const index = this.state.searchTags.indexOf(name);
+		const indexInPinned = this.state.pinnedSearch.indexOf(name);
+		if(index === -1){
+			if( indexInPinned !== -1 ){
+				this.state.pinnedSearch.splice(indexInPinned,1);
+				var arr = this.state.searchTags;
+				arr.push(name);
+				this.setState({searchTags:arr});
+				this.setState({pinnedSearch:this.state.pinnedSearch});
 			}
 		}
-		for(var i=0; i<tags.length; i++){
-			trainImagesUp.push(<ImageComponent height={height} width={width} path={tags[i]} closeFunction={removeImage} />);
+		else{
+			this.state.searchTags.splice(index,1);
+			var arr = this.state.pinnedSearch;
+			arr.push(name);
+			this.setState({searchTags:this.state.searchTags});
+			this.setState({pinnedSearch:arr});
 		}
-		setTrainsSearch(tags);*/
+		this.LoadAllTags(this.state.searchTags);
 	}
 
 	LoadAllTags(data){
 		var trainImagesUp = [];
 		this.setState({searchTags:data});
+		globalSearchTags = this.state.searchTags;
 		trainImagesUp = [];
 		for(var i=0; i<data.length; i++){
-			trainImagesUp.push(<ImageComponent height={this.height} width={this.width} path={data[i]} pinFunction={this.pinImage} color='red' />);
+			console.log('there');
+			trainImagesUp.push(<ImageComponent height={this.height} width={this.width} path={data[i]} pinFunction={this.pinImage} color='white' />);
+		}
+		for(var i=0; i<this.state.pinnedSearch.length; i++){
+			console.log('here');
+			trainImagesUp.push(<ImageComponent height={this.height} width={this.width} path={this.state.pinnedSearch[i]} pinFunction={this.pinImage} color='red' />);
 		}
 		this.setState({trainsSearch:trainImagesUp});
-		console.log(trainImagesUp);
 	}
 
 
