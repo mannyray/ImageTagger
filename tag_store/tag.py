@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 import pickle
 import os.path
@@ -7,30 +7,57 @@ import numpy as np
 app = Flask(__name__)
 CORS(app)
 
-
 #tags -> dictionary: maps file names to an an array of tags
 #tags_inv -> dictionary: maps tags to file names (inv for inverse)
-if os.path.exists('data.pkl'):
-    save_file = open("data.pkl", "rb")
-    tags = pickle.load(save_file)
-    tags_inv = {}
-    for imageNameKey in tags:
-        for tagOfImage in tags[imageNameKey]:
-            if tagOfImage not in tags_inv:
-                tags_inv[tagOfImage] = [ imageNameKey ]
+#TODO we need the path
+tags = {}
+tags_inv = {}
+saveDirectory = ''
+
+#get all images in directory
+@app.route('/get_images_in_directory_and_set_path',methods=['GET'])
+def get_images_in_directory_and_set_path():
+    global saveDirectory
+    saveDirectory = request.args.get('save_directory',default='',type = str )
+    if os.path.exists(saveDirectory + '/data.pkl'):
+        save_file = open("data.pkl", "rb")
+        tags = pickle.load(save_file)
+        tags_inv = {}
+        for imageNameKey in tags:
+            for tagOfImage in tags[imageNameKey]:
+                if tagOfImage not in tags_inv:
+                    tags_inv[tagOfImage] = [ imageNameKey ]
+                else:
+                    tmp = tags_inv[tagOfImage]
+                    tmp.append( imageNameKey )
+                    tags_inv[tagOfImage] = tmp
+    try:
+        os.makedirs(saveDirectory)
+    except FileExistsError:
+        print(saveDirectory+" already exists")
+
+    directory = request.args.get('directory',default='',type = str )
+    results = os.listdir(directory)
+    files = []
+    for f in results:
+        if len(f) > 4 and f[-4:] == ".JPG":
+            basename = f.split('.')[0]
+            if basename+'.CR3' in results:
+                files.append([f,basename+'.CR3'])
             else:
-                tmp = tags_inv[tagOfImage]
-                tmp.append( imageNameKey )
-                tags_inv[tagOfImage] = tmp
-else:
-    tags = {}
-    tags_inv = {}
+                files.append([f])
+    return jsonify(files)
+
+@app.route('/get_specific_image',methods=['GET'])
+def get_specific_image():
+    page = request.args.get('path',default='', type = str )
+    print(page)
+    return send_file(page, mimetype='image/jpg')
 
 #get all the unique tags up to now
 @app.route('/get_unique_tags',methods=['POST'])
 def get_unique_tags():
     return jsonify([x for x in tags_inv])
-
 
 #provided a list 
 @app.route('/images_for_tags',methods=['POST'])
@@ -49,7 +76,7 @@ def get_image_for_tags():
 @app.route('/tag_for_image',methods=['POST'])
 def get_tags():
     data = request.get_json()
-    print(data)
+    print('getting tags for '+ data['image_name'])
     if data['image_name'] in tags:
        print(tags)
        print(tags[data['image_name']])
@@ -76,7 +103,7 @@ def add_tags():
             tmp.append( data['image_name'] )
             tags_inv[tagOfImage] = tmp
     
-    save_file = open("data.pkl", "wb")
+    save_file = open(saveDirectory+"/data.pkl", "wb")
     pickle.dump(tags, save_file)
     save_file.close()
 

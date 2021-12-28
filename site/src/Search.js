@@ -41,8 +41,6 @@ export default class Search extends Component {
 	}
 
 	pinImage(name){
-		console.log('ddd');
-		console.log(name);
 		const index = this.state.searchTags.indexOf(name);
 		const indexInPinned = this.state.pinnedSearch.indexOf(name);
 		if(index === -1){
@@ -70,11 +68,9 @@ export default class Search extends Component {
 		globalSearchTags = this.state.searchTags;
 		trainImagesUp = [];
 		for(var i=0; i<data.length; i++){
-			console.log('there');
 			trainImagesUp.push(<ImageComponent height={this.height} width={this.width} path={data[i]} pinFunction={this.pinImage} color='white' />);
 		}
 		for(var i=0; i<this.state.pinnedSearch.length; i++){
-			console.log('here');
 			trainImagesUp.push(<ImageComponent height={this.height} width={this.width} path={this.state.pinnedSearch[i]} pinFunction={this.pinImage} color='red' />);
 		}
 		this.setState({trainsSearch:trainImagesUp});
