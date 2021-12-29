@@ -2,9 +2,7 @@ import React, { useState, Component, useEffect} from 'react';
 import Draggable, {DraggableCore} from 'react-draggable';
 import ReactDOM from 'react-dom';
 
-const url_search_backend='http://127.0.0.1:5001';
-
-export default function ImageComponent({height,width,path,pinFunction,color}){
+export default function ImageComponent({height,width,path,pinFunction,color,url_backend}){
 	const [dragState, setDragState] = useState({activeDrags: 0, deltaPosition: { x: 0, y: 0 }, controlledPosition: {x: -400, y: 200  }})
 	const onStart = () => { setDragState({activeDrags: ++dragState.activeDrags});};
 	const onStop = () => { setDragState({activeDrags: --dragState.activeDrags});};
@@ -50,7 +48,7 @@ export default function ImageComponent({height,width,path,pinFunction,color}){
 		body: JSON.stringify({ })
 	};
 	useEffect( () => {
-		fetch(url_search_backend+'/get_specific_tags?train='+path, requestOptions).then(res => res.json()).then(res => onLoadedTags(res) );
+		fetch(url_backend+'/get_specific_tags?train='+path, requestOptions).then(res => res.json()).then(res => onLoadedTags(res) );
 	}, []);
 
 	return(
@@ -70,7 +68,7 @@ export default function ImageComponent({height,width,path,pinFunction,color}){
 								</div>
 							</div>
 						</summary>
-						<img src={'http://127.0.0.1:5001/get_specific_image?page=' + path} style={{width:width*0.196}}/>
+						<img src={ url_backend + '/get_specific_image_search?page=' + path} style={{width:width*0.196}}/>
 					</details>
 				</div>
 			</Draggable>

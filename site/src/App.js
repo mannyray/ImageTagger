@@ -9,20 +9,22 @@ import configuration from "./config.json";
 import Search from './Search';
 import SetupPath from './SetupPath';
 
+const url_backend='http://127.0.0.1:5000';
+
 const App = () => {
 	const { height, width } = useWindowDimensions();
 
 	return (
 		<BrowserRouter>
 			<Switch>
-				<Route path="/">
-					<div>
-						<SetupPath height={height} width={width} />
-					</div>
-				</Route>
 				<Route path="/search">
 					<div>
-						<Search height={height} width={width}/>
+						<Search url_backend={url_backend} height={height} width={width}/>
+					</div>
+				</Route>
+				<Route path="/">
+					<div>
+						<SetupPath url_backend={url_backend} height={height} width={width} />
 					</div>
 				</Route>
 			</Switch>

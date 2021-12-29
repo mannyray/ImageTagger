@@ -3,6 +3,9 @@ from flask_cors import CORS
 import pickle
 import os.path
 import numpy as np
+import shutil
+import glob
+import re
 
 app = Flask(__name__)
 CORS(app)
@@ -91,9 +94,15 @@ def add_tags():
     data = request.get_json()
     tags[data['image_name']] = data['tags']
 
-    #TODO deleting tags when resaving
+    source_path = data['source_path']
+    destination_path = data['destination_path']
 
-    #TODO save to longterm storage
+    try:
+        shutil.copyfile(source_path+"/"+data['image_name'],destination_path+"/"+data["image_name"])
+        shutil.copyfile(source_path+"/"+data['image_name'].split('.')[0]+'.CR3',destination_path+"/"+data["image_name"].split(".")[0]+".CR3")
+    except:
+        print("copy error")
+    
 
     for tagOfImage in data['tags']:
         if tagOfImage not in tags_inv:
@@ -108,3 +117,120 @@ def add_tags():
     save_file.close()
 
     return '', 200
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#for searching things
+
+
+
+image_store = '/media/stan/Extreme SSD/train_picture'
+
+folderToDictionary = {}
+tagToImages = {}
+filePickle = glob.glob("../site/public/202*")
+for dictionary in filePickle:
+    base = os.path.basename(dictionary)
+    save_file = open(os.path.join(dictionary,"data.pkl"), "rb")
+
+    tags_local = pickle.load(save_file)
+    images_to_ignore = []
+    for imageFileName in tags_local:
+        if 'd' in tags_local[imageFileName]:
+            images_to_ignore.append(imageFileName)
+    folderToDictionary[base] = tags_local
+    for image in images_to_ignore:
+        del tags_local[image]
+
+    for imageNameKey in tags_local:
+        for tagOfImage in tags_local[imageNameKey]:
+            if tagOfImage not in tagToImages:
+                tagToImages[tagOfImage] = [ base + "/" + imageNameKey ]
+            else:
+                tmp = tagToImages[tagOfImage]
+                tmp.append( base + "/" + imageNameKey )
+                tagToImages[tagOfImage] = tmp#TODO image needs to have path appended as well to distinguish
+'''
+-- filter by code
+-- filter by message
+-- filter by unknown
+-- filter by img
+'''
+@app.route('/all_tags_and_frequency',methods=['POST','GET'])
+def get_all_tags_and_frequency():
+    return jsonify([str(x)+' '+str(tagToImages[x]) for x in tagToImages])
+#    return get_all_codes()
+
+
+@app.route('/all_codes',methods=['GET','POST'])
+def get_all_codes():
+    arr = []
+    for tag in tagToImages:
+        if 'code' in tag:
+            if len(tagToImages[tag]) > 1:
+                arr.append([tag,tagToImages[tag]])
+    return jsonify( arr )
+
+@app.route('/get_specific_image_search',methods=['GET'])
+def get_specific_image_search():
+    page = request.args.get('page',default='', type = str )
+    return send_file(image_store+'/'+page, mimetype='image/jpg')
+
+#exact search
+@app.route('/get_all_images_for_tag',methods=['GET','POST'])
+def get_all_images_for_tag():
+    page = request.args.get('page',default='',type = str )
+    if page in tagToImages:
+        return jsonify(tagToImages[page])
+    else:
+        return jsonify([])
+
+#TODO lose search
+
+@app.route('/get_specific_tags',methods=['GET','POST'])
+def get_specific_tag():
+    train = request.args.get('train',default='',type=str)
+    if len(train) == 0:
+        return jsonify( [] )
+    split = train.split("/")
+    if len(split) == 2:
+        print( folderToDictionary[split[0]][split[1]]  )
+        return jsonify( folderToDictionary[split[0]][split[1]] )
+    else:
+        print('else')
+        return jsonify( [] )
+
+
+@app.route('/group_by_similarity',methods=['GET','POST'])
+def group_by_similarity():
+    res = []
+
+    search_data = []
+    for tag in tagToImages:
+        if 'text ' not in tag and 'tag ' not in tag:
+            continue
+        for tag2 in tagToImages:
+            if 'text ' not in tag2 and 'tag ' not in tag2:
+                continue
+            if ')' in tag: #H2) == H20
+                continue
+            if '(' in tag:#message painting with that *(
+                continue
+            if tag == tag2:
+                continue
+
+            tagFilter = re.sub(r"text ","",re.sub(r"tag ","",re.sub(r"\*",r"\.", re.sub(r"(\W)\1+",r"\1",tag))))
+            tagFilter2 = re.sub(r"text ","",re.sub(r"tag ","",re.sub( r"\*",r"\.\*",tag2)))
+            try:
+                x = re.search(tagFilter, tagFilter2)
+            except:
+                print("ERROR")
+                print(tag + " " + tag2)
+                t = 0/0
+            if x:
+                print(tag + " " + tag2)
+
+    return jsonify(res)
+
+'''
+return current best results for
+'''

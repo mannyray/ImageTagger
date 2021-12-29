@@ -61,40 +61,39 @@ flask run
  
 Backend:
  - ~~rename hello.py and improperly methods within~~
- - Upon load up, allow ability to load all the tags for searching process (autofill)
  - ~~Update folder names~~
- - If front end requests an image the send it to front end (either low res or high res)
- - saving an image from front end
-   * place it by date folder (fix to YYYY-MM-DD convention)
-      * does that mean you have to check the date all the time?
-   * create a low resolution version
-   * image needs a _key_ which will be the combination of file name and the date of processing
 
 separate page to modify backend
 
-Config file:
- - directory of where the high resolution images are stored (in case limited memory in computer) like a nas server
- - directory of where the local low resolution are stored along with the tags
- - ~~specify the defaul tags for suggested tags~~
+Setup page:
+ - ~~page where you specify source and destination. Destination is long term storage~~
 
 Front end:
  - ~~Make image take up entire screen~~
  - ~~Have a zoom feature that does not depend on full screen size~~
  - ~~Hyper link to see full size image(don't need that as current zoom feature good enough)~~
  - ~~set variable for 127.0.0.1:5000~~
+   -- **create single source for url in all code**
  - ~~tab out code~~
  - ~~Place tagging search bar in a better place~~
  - ~~basic on screen instructions including tagging guide lines~~
  - Create a scroll bar to get to next images faster
- - Ability to upload pictures upon 'saving' to backend along with its tags
+ - ~~Ability to upload pictures upon 'saving' to backend along with its tags~~
  - ~~New page (through new path): for searching through tags~~
    * ~~Search bar for tags~~
    * ~~Search results should have images too along with their tags~~
+   * ~~combine search flask backend python code with tagging backend~~
    * Search bar with autofill feature and ability to copy paste
    * make images in search zoomable/stretchable
-   * way to search so that it is not exact search
+   * **way to search so that it is not exact search**
    * ~~Save some images to a 'hot' list~~
    * show search history
    * ~~Load images that pop up that are searched for (make sure we don't overwhelm backend)~~
    * Allow ability to view resultant image in new tab full resolution 
- - New page for editings tags
+ - **New page for editings tags**
+
+
+Code cleanup:
+ - remove references to train
+ - **clear up POST/GET requests**
+ - **add documentation**

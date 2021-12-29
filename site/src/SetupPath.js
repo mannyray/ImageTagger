@@ -14,6 +14,7 @@ export default class SetupPath extends Component {
 		this.width = this.props.width;
 		this.state = {sourcePath:'',destinationPath:'',submit:false,images:[]};
 		this.handleSubmission = this.handleSubmission.bind(this)
+		this.url_backend = this.props.url_backend;
 	}
 
 	handleSubmission(event){
@@ -38,7 +39,7 @@ export default class SetupPath extends Component {
 		else{
 			return (
 				<div>
-					<Tag height={this.height} width={this.width} firstImage={this.state.images[0]} images={this.state.images} sourcePath={this.state.sourcePath} destinationPath={this.state.destinationPath}  />
+					<Tag url_backend={this.url_backend} height={this.height} width={this.width} firstImage={this.state.images[0]} images={this.state.images} sourcePath={this.state.sourcePath} destinationPath={this.state.destinationPath}  />
 				</div>
 			);
 		}

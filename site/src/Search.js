@@ -3,8 +3,6 @@ import Draggable, {DraggableCore} from 'react-draggable';
 import ReactDOM from 'react-dom';
 import ImageComponent from './ImageComponent';
 
-
-const url_search_backend='http://127.0.0.1:5001';
 var globalSearchTags = [];
 
 export default class Search extends Component {
@@ -14,6 +12,8 @@ export default class Search extends Component {
 		this.width = this.props.width;
 		this.height = this.props.height;
 		this.state = {value:'',searchTags:[],trainsSearch:[],pinnedSearch:[]};
+
+		this.url_backend = this.props.url_backend;
 
 		this.pinImage = this.pinImage.bind(this);
 		this.LoadAllTags = this.LoadAllTags.bind(this);
@@ -27,7 +27,7 @@ export default class Search extends Component {
 			if(event.key === 'Enter'){
 				this.setState({trainsSearch:[]});
 				var searchString = this.state.value.replace(" ","%20");
-				fetch(url_search_backend+'/get_all_images_for_tag?page='+searchString, requestOptions).then(res => res.json()).then(res => this.LoadAllTags(res));
+				fetch(this.url_backend+'/get_all_images_for_tag?page='+searchString, requestOptions).then(res => res.json()).then(res => this.LoadAllTags(res));
 			}
 			else{
 				if(event.key === '='){
@@ -68,10 +68,10 @@ export default class Search extends Component {
 		globalSearchTags = this.state.searchTags;
 		trainImagesUp = [];
 		for(var i=0; i<data.length; i++){
-			trainImagesUp.push(<ImageComponent height={this.height} width={this.width} path={data[i]} pinFunction={this.pinImage} color='white' />);
+			trainImagesUp.push(<ImageComponent url_backend={this.url_backend} height={this.height} width={this.width} path={data[i]} pinFunction={this.pinImage} color='white' />);
 		}
 		for(var i=0; i<this.state.pinnedSearch.length; i++){
-			trainImagesUp.push(<ImageComponent height={this.height} width={this.width} path={this.state.pinnedSearch[i]} pinFunction={this.pinImage} color='red' />);
+			trainImagesUp.push(<ImageComponent url_backend={this.url_backend} height={this.height} width={this.width} path={this.state.pinnedSearch[i]} pinFunction={this.pinImage} color='red' />);
 		}
 		this.setState({trainsSearch:trainImagesUp});
 	}

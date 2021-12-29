@@ -11,7 +11,6 @@ const colour_coding = json['colour_coding'];
 
 var combos = ["'n'+'Enter'","'b'+'Enter'","'s'+'Enter'","'d'+'Enter'","'='"];
 var combos_action = ["Go to next image","Go to previous image.","Save image to database.","Delete the image.","Clear current info in bar"];
-const url_backend='http://127.0.0.1:5000';
 
 export default class Tag extends Component {
 
@@ -28,6 +27,8 @@ export default class Tag extends Component {
 		}
 		this.destinationPath = this.props.destinationPath;
 		this.sourcePath = this.props.sourcePath;
+
+		this.url_backend = this.props.url_backend;
 
 		this.state = {
 			images: this.props.images,
@@ -55,10 +56,9 @@ export default class Tag extends Component {
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ image_name:this.state.image_viewed[0],tags:this.state.tags })
+					body: JSON.stringify({ image_name:this.state.image_viewed[0],tags:this.state.tags,source_path:this.sourcePath,destination_path:this.destinationPath})
 				};
-				//TODO we need to pass the path so that it handles the files
-				fetch(url_backend+'/tags', requestOptions);
+				fetch(this.url_backend+'/tags', requestOptions);
 				this.updateTags([]);
 				this.state.value = 'n';
 			}
@@ -68,7 +68,7 @@ export default class Tag extends Component {
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ image_name:this.state.image_viewed[0],tags:['d'] })
 				};
-				fetch(url_backend+'/tags', requestOptions);
+				fetch(this.url_backend+'/tags', requestOptions);
 				this.state.value = 'n';
 				this.updateTags([]);
 			}
@@ -93,7 +93,9 @@ export default class Tag extends Component {
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ image_name:selected_image[0] })
 				};
-				fetch(url_backend+'/tag_for_image', requestOptions).then(res => res.json()).then(res => this.updateTags(res));
+				console.log('url backend')
+				console.log(this.url_backend)
+				fetch(this.url_backend+'/tag_for_image', requestOptions).then(res => res.json()).then(res => this.updateTags(res));
 			}
 			else{
 				var arrs = this.state.tags;
