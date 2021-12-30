@@ -19,15 +19,10 @@ export default class Search extends Component {
 		this.LoadAllTags = this.LoadAllTags.bind(this);
 
 		this.handler = (event) => {
-			const requestOptions = {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ })
-			};
 			if(event.key === 'Enter'){
 				this.setState({trainsSearch:[]});
 				var searchString = this.state.value.replace(" ","%20");
-				fetch(this.url_backend+'/get_all_images_for_tag?page='+searchString, requestOptions).then(res => res.json()).then(res => this.LoadAllTags(res));
+				fetch(this.url_backend+'/get_all_images_for_tag?page='+searchString).then(res => res.json()).then(res => this.LoadAllTags(res) );
 			}
 			else{
 				if(event.key === '='){

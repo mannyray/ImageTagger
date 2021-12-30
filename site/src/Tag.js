@@ -55,20 +55,21 @@ export default class Tag extends Component {
 			if(this.state.value === 's'){
 				const requestOptions = {
 					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
+					headers: { 'Content-Type': 'application/json'},
 					body: JSON.stringify({ image_name:this.state.image_viewed[0],tags:this.state.tags,source_path:this.sourcePath,destination_path:this.destinationPath})
 				};
-				fetch(this.url_backend+'/tags', requestOptions);
+				fetch(this.url_backend+'/save_tags_for_image', requestOptions);
 				this.updateTags([]);
 				this.state.value = 'n';
 			}
 			if(this.state.value === 'd'){
+				//TODO we make sure we are not actually saving this image
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ image_name:this.state.image_viewed[0],tags:['d'] })
 				};
-				fetch(this.url_backend+'/tags', requestOptions);
+				fetch(this.url_backend+'/save_tags_for_image', requestOptions);
 				this.state.value = 'n';
 				this.updateTags([]);
 			}
@@ -88,14 +89,7 @@ export default class Tag extends Component {
 				var selected_image = [];
 				selected_image = this.state.images[this.state.index];
 				this.setState({image_viewed:selected_image});
-				const requestOptions = {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ image_name:selected_image[0] })
-				};
-				console.log('url backend')
-				console.log(this.url_backend)
-				fetch(this.url_backend+'/tag_for_image', requestOptions).then(res => res.json()).then(res => this.updateTags(res));
+				fetch(this.url_backend+'/get_tags_for_image?image_name='+selected_image[0]).then(res => res.json()).then(res => this.updateTags(res));
 			}
 			else{
 				var arrs = this.state.tags;

@@ -1,6 +1,7 @@
 import React, { useState, Component, useEffect} from 'react';
 import Draggable, {DraggableCore} from 'react-draggable';
 import ReactDOM from 'react-dom';
+import {TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 export default function ImageComponent({height,width,path,pinFunction,color,url_backend}){
 	const [dragState, setDragState] = useState({activeDrags: 0, deltaPosition: { x: 0, y: 0 }, controlledPosition: {x: -400, y: 200  }})
@@ -35,10 +36,12 @@ export default function ImageComponent({height,width,path,pinFunction,color,url_
 				buttons.push(<button class="button">{data[i]}</button>);
 			}
 		}
+		buttons.push(<button class="button">{path}</button>);
 		setTagButtons(buttons);
 		if(foundCode===true){
 			return;
 		}
+		//TODO check this edge case
 		setTitle('unknown');
 	}
 
@@ -48,7 +51,7 @@ export default function ImageComponent({height,width,path,pinFunction,color,url_
 		body: JSON.stringify({ })
 	};
 	useEffect( () => {
-		fetch(url_backend+'/get_specific_tags?train='+path, requestOptions).then(res => res.json()).then(res => onLoadedTags(res) );
+		fetch(url_backend+'/get_specific_tags?train='+path, requestOptions).then(res => res.json()).then(res => onLoadedTags(res));
 	}, []);
 
 	return(
@@ -68,7 +71,11 @@ export default function ImageComponent({height,width,path,pinFunction,color,url_
 								</div>
 							</div>
 						</summary>
-						<img src={ url_backend + '/get_specific_image_search?page=' + path} style={{width:width*0.196}}/>
+						<TransformWrapper>
+							<TransformComponent>
+								<img src={ url_backend + '/get_specific_image_search?page=' + path} style={{width:width*0.196}}/>
+							</TransformComponent>
+						</TransformWrapper>
 					</details>
 				</div>
 			</Draggable>
