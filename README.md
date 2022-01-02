@@ -94,11 +94,12 @@ Front end:
    * **When pinning make it so that order is not changed or position in screen**
  - **New page for editings tags**
 
+tagging -> select which folder you are tagging
 
 Code cleanup:
  - remove references to train
- - **clear up POST/GET requests**
+ - ~~clear up POST/GET requests~~
  - **add documentation**
- - **split and organize and modularize the code in tag.py**
+ - ~~split and organize and modularize the code in tag.py~~
  - **have a separate wrapper for reading from the database/file**
- - **upload pictures through flask**  
+ - ~~upload pictures through flask~~

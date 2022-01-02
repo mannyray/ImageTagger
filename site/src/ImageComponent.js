@@ -45,13 +45,8 @@ export default function ImageComponent({height,width,path,pinFunction,color,url_
 		setTitle('unknown');
 	}
 
-	const requestOptions = {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ })
-	};
 	useEffect( () => {
-		fetch(url_backend+'/get_specific_tags?train='+path, requestOptions).then(res => res.json()).then(res => onLoadedTags(res));
+		fetch(url_backend+'/get_specific_tags?train='+path).then(res => res.json()).then(res => onLoadedTags(res));
 	}, []);
 
 	return(

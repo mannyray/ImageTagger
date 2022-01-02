@@ -25,8 +25,6 @@ export default class Tag extends Component {
 		for(var i=0; i<colour_coding.length; i++){
 			colour_instructions.push(<tr><td style={{backgroundColor:colour_coding[i]['colour']}}>{colour_coding[i]['start_word']}</td></tr>);
 		}
-		this.destinationPath = this.props.destinationPath;
-		this.sourcePath = this.props.sourcePath;
 
 		this.url_backend = this.props.url_backend;
 
@@ -43,11 +41,14 @@ export default class Tag extends Component {
 			value:'',
 			colourInstructions: colour_instructions,
 			tags:[],
-			tagsHTML:[]
+			tagsHTML:[],
+			save_directory:this.props.save_directory
 		};
 		this.handler = this.handler.bind(this);
 		this.handleCross = this.handleCross.bind(this);
 		this.updateTag = this.updateTags.bind(this);
+
+		fetch(this.url_backend+'/get_tags_for_image?image_name='+this.props.firstImage[0]).then(res => res.json()).then(res => this.updateTags(res));
 	}
 
 	handler(event){
@@ -56,14 +57,13 @@ export default class Tag extends Component {
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json'},
-					body: JSON.stringify({ image_name:this.state.image_viewed[0],tags:this.state.tags,source_path:this.sourcePath,destination_path:this.destinationPath})
+					body: JSON.stringify({ image_name:this.state.image_viewed[0],tags:this.state.tags})
 				};
 				fetch(this.url_backend+'/save_tags_for_image', requestOptions);
 				this.updateTags([]);
 				this.state.value = 'n';
 			}
 			if(this.state.value === 'd'){
-				//TODO we make sure we are not actually saving this image
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
@@ -162,7 +162,7 @@ export default class Tag extends Component {
 					<div style={{ float:'left', display:'flex' }} class="container">
 						<TransformWrapper>
 							<TransformComponent>
-								<img src={'http://127.0.0.1:5000/get_specific_image?path='+this.sourcePath.replace(' ','%20') + '/'+this.state.image_viewed[0]} style={{height:this.state.height*0.7}} alt="test" />
+								<img src={this.url_backend+'/get_specific_image_search?page='+this.state.save_directory+'/'+ this.state.image_viewed[0]} style={{height:this.state.height*0.7}} alt="test" />
 							</TransformComponent>
 						</TransformWrapper>
 						<div style={{ float:'left'  }}>

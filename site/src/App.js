@@ -7,7 +7,7 @@ import  useWindowDimensions from './windows.js';
 import ReactDOM from 'react-dom';
 import configuration from "./config.json";
 import Search from './Search';
-import SetupPath from './SetupPath';
+import Upload from './Upload';
 
 const url_backend='http://127.0.0.1:5000';
 
@@ -24,7 +24,7 @@ const App = () => {
 				</Route>
 				<Route path="/">
 					<div>
-						<SetupPath url_backend={url_backend} height={height} width={width} />
+						<Upload url_backend={url_backend} height={height} width={width}/>
 					</div>
 				</Route>
 			</Switch>
