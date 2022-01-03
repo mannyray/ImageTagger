@@ -68,7 +68,7 @@ export default function ImageComponent({height,width,path,pinFunction,color,url_
 						</summary>
 						<TransformWrapper>
 							<TransformComponent>
-								<img src={ url_backend + '/get_specific_image_search?page=' + path} style={{width:width*0.196}}/>
+								<img src={ url_backend + '/get_specific_image?page=' + path.split('/')[0] + '&image='+path.split('/')[1]} style={{width:width*0.196}}/>
 							</TransformComponent>
 						</TransformWrapper>
 					</details>

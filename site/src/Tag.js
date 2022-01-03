@@ -48,30 +48,23 @@ export default class Tag extends Component {
 		this.handleCross = this.handleCross.bind(this);
 		this.updateTag = this.updateTags.bind(this);
 
-		fetch(this.url_backend+'/get_tags_for_image?image_name='+this.props.firstImage[0]).then(res => res.json()).then(res => this.updateTags(res));
+		fetch(this.url_backend+'/get_tags_for_image?image_name='+this.props.firstImage[0]+'&path='+this.state.save_directory).then(res => res.json()).then(res => this.updateTags(res));
 	}
 
 	handler(event){
 		if(event.key === 'Enter'){
-			if(this.state.value === 's'){
+			if(this.state.value === 's' || this.state.value === 'd'){
+				if(this.state.value === 'd'){
+					this.state.tags = ['d'];
+				}
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json'},
-					body: JSON.stringify({ image_name:this.state.image_viewed[0],tags:this.state.tags})
+					body: JSON.stringify({ image_name:this.state.image_viewed[0],tags:this.state.tags,save_directory:this.state.save_directory})
 				};
 				fetch(this.url_backend+'/save_tags_for_image', requestOptions);
 				this.updateTags([]);
 				this.state.value = 'n';
-			}
-			if(this.state.value === 'd'){
-				const requestOptions = {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ image_name:this.state.image_viewed[0],tags:['d'] })
-				};
-				fetch(this.url_backend+'/save_tags_for_image', requestOptions);
-				this.state.value = 'n';
-				this.updateTags([]);
 			}
 			if(this.state.value === 'n' || this.state.value === 'b'){
 				if(this.state.value === 'n'){
@@ -89,7 +82,7 @@ export default class Tag extends Component {
 				var selected_image = [];
 				selected_image = this.state.images[this.state.index];
 				this.setState({image_viewed:selected_image});
-				fetch(this.url_backend+'/get_tags_for_image?image_name='+selected_image[0]).then(res => res.json()).then(res => this.updateTags(res));
+				fetch(this.url_backend+'/get_tags_for_image?image_name='+selected_image[0]+'&path='+this.state.save_directory).then(res => res.json()).then(res => this.updateTags(res));
 			}
 			else{
 				var arrs = this.state.tags;
@@ -162,7 +155,7 @@ export default class Tag extends Component {
 					<div style={{ float:'left', display:'flex' }} class="container">
 						<TransformWrapper>
 							<TransformComponent>
-								<img src={this.url_backend+'/get_specific_image_search?page='+this.state.save_directory+'/'+ this.state.image_viewed[0]} style={{height:this.state.height*0.7}} alt="test" />
+								<img src={this.url_backend+'/get_specific_image?page='+this.state.save_directory+'&image='+this.state.image_viewed[0]} style={{height:this.state.height*0.7}} alt="test" />
 							</TransformComponent>
 						</TransformWrapper>
 						<div style={{ float:'left'  }}>
