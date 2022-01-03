@@ -1,7 +1,5 @@
-import React, { useState, Component, useEffect} from 'react';
+import React, {  Component } from 'react';
 import {TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import Draggable, {DraggableCore} from 'react-draggable';
-import ReactDOM from 'react-dom';
 import configuration from "./config.json";
 
 const loadedData = JSON.stringify(configuration);

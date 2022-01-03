@@ -1,4 +1,4 @@
-import React, { useState, Component, useEffect} from 'react';
+import React, {Component} from 'react';
 import Tag from './Tag';
 
 export default class Upload extends Component {

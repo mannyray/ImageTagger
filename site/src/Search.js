@@ -1,9 +1,5 @@
-import React, { useState, Component, useEffect} from 'react';
-import Draggable, {DraggableCore} from 'react-draggable';
-import ReactDOM from 'react-dom';
+import React, { Component } from 'react';
 import ImageComponent from './ImageComponent';
-
-var globalSearchTags = [];
 
 export default class Search extends Component {
 
@@ -49,10 +45,10 @@ export default class Search extends Component {
 		}
 		else{
 			this.state.searchTags.splice(index,1);
-			var arr = this.state.pinnedSearch;
-			arr.push(name);
+			var arr2 = this.state.pinnedSearch;
+			arr2.push(name);
 			this.setState({searchTags:this.state.searchTags});
-			this.setState({pinnedSearch:arr});
+			this.setState({pinnedSearch:arr2});
 		}
 		this.LoadAllTags(this.state.searchTags);
 	}
@@ -60,12 +56,11 @@ export default class Search extends Component {
 	LoadAllTags(data){
 		var trainImagesUp = [];
 		this.setState({searchTags:data});
-		globalSearchTags = this.state.searchTags;
 		trainImagesUp = [];
 		for(var i=0; i<data.length; i++){
 			trainImagesUp.push(<ImageComponent url_backend={this.url_backend} height={this.height} width={this.width} path={data[i]} pinFunction={this.pinImage} color='white' />);
 		}
-		for(var i=0; i<this.state.pinnedSearch.length; i++){
+		for(i=0; i<this.state.pinnedSearch.length; i++){
 			trainImagesUp.push(<ImageComponent url_backend={this.url_backend} height={this.height} width={this.width} path={this.state.pinnedSearch[i]} pinFunction={this.pinImage} color='red' />);
 		}
 		this.setState({trainsSearch:trainImagesUp});

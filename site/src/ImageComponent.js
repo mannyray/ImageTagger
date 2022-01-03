@@ -1,6 +1,5 @@
-import React, { useState, Component, useEffect} from 'react';
-import Draggable, {DraggableCore} from 'react-draggable';
-import ReactDOM from 'react-dom';
+import React, { useState, useEffect} from 'react';
+import Draggable from 'react-draggable';
 import {TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 export default function ImageComponent({height,width,path,pinFunction,color,url_backend}){
@@ -9,7 +8,6 @@ export default function ImageComponent({height,width,path,pinFunction,color,url_
 	const onStop = () => { setDragState({activeDrags: --dragState.activeDrags});};
 	const dragHandlers = {onStart: onStart, onStop: onStop};
 
-	const [tagState, setTagState] = useState([]);
 	const [tagButtons, setTagButtons] = useState([]);
 	const [title, setTitle] = useState('');
 	const [visibilityStatus, setVisibilityStatus] = useState(['visible','nonce']);
@@ -25,7 +23,6 @@ export default function ImageComponent({height,width,path,pinFunction,color,url_
 
 	function onLoadedTags( data ){
 		var buttons = [];
-		setTagState(data);
 		var foundCode = false;
 		for(var i=0; i<data.length; i++){
 			if( data[i].length > 4 && data[i].substring(0,4) === 'code' ){
@@ -68,7 +65,7 @@ export default function ImageComponent({height,width,path,pinFunction,color,url_
 						</summary>
 						<TransformWrapper>
 							<TransformComponent>
-								<img src={ url_backend + '/get_specific_image?page=' + path.split('/')[0] + '&image='+path.split('/')[1]} style={{width:width*0.196}}/>
+								<img alt='zoomable' src={ url_backend + '/get_specific_image?page=' + path.split('/')[0] + '&image='+path.split('/')[1]} style={{width:width*0.196}}/>
 							</TransformComponent>
 						</TransformWrapper>
 					</details>

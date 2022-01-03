@@ -1,11 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { Component } from 'react';
-import {TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { Image, Dimensions } from 'react-native';
 import  useWindowDimensions from './windows.js';
-import ReactDOM from 'react-dom';
-import configuration from "./config.json";
 import Search from './Search';
 import Upload from './Upload';
 
