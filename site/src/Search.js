@@ -7,7 +7,7 @@ export default class Search extends Component {
 		super(props)
 		this.width = this.props.width;
 		this.height = this.props.height;
-		this.state = {value:'',searchTags:[],trainsSearch:[],pinnedSearch:[]};
+		this.state = {value:'',searchTags:[],searchResult:[],pinnedSearch:[]};
 
 		this.url_backend = this.props.url_backend;
 
@@ -16,9 +16,9 @@ export default class Search extends Component {
 
 		this.handler = (event) => {
 			if(event.key === 'Enter'){
-				this.setState({trainsSearch:[]});
+				this.setState({searchResult:[]});
 				var searchString = this.state.value.replace(" ","%20");
-				fetch(this.url_backend+'/get_all_images_for_tag?page='+searchString).then(res => res.json()).then(res => this.LoadAllTags(res) );
+				fetch(this.url_backend+'/get_all_images_for_tag?path='+searchString).then(res => res.json()).then(res => this.LoadAllTags(res) );
 			}
 			else{
 				if(event.key === '='){
@@ -54,26 +54,25 @@ export default class Search extends Component {
 	}
 
 	LoadAllTags(data){
-		var trainImagesUp = [];
+		var imagesUp = [];
 		this.setState({searchTags:data});
-		trainImagesUp = [];
+		imagesUp = [];
 		for(var i=0; i<data.length; i++){
-			trainImagesUp.push(<ImageComponent url_backend={this.url_backend} height={this.height} width={this.width} path={data[i]} pinFunction={this.pinImage} color='white' />);
+			imagesUp.push(<ImageComponent url_backend={this.url_backend} height={this.height} width={this.width} path={data[i]} pinFunction={this.pinImage} color='white' />);
 		}
 		for(i=0; i<this.state.pinnedSearch.length; i++){
-			trainImagesUp.push(<ImageComponent url_backend={this.url_backend} height={this.height} width={this.width} path={this.state.pinnedSearch[i]} pinFunction={this.pinImage} color='red' />);
+			imagesUp.push(<ImageComponent url_backend={this.url_backend} height={this.height} width={this.width} path={this.state.pinnedSearch[i]} pinFunction={this.pinImage} color='red' />);
 		}
-		this.setState({trainsSearch:trainImagesUp});
+		this.setState({searchResult:imagesUp});
 	}
 
 
-	//include previous search history too
 	render() {
 		return (
 			<div>
 				<h1>Search page</h1>
 				<input type="text"  value={this.state.value}  onKeyPress={(e) => this.handler(e)}  autofocus="autofocus" />
-				{this.state.trainsSearch}
+				{this.state.searchResult}
 			</div>
 		);
 	}

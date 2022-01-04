@@ -38,12 +38,11 @@ export default function ImageComponent({height,width,path,pinFunction,color,url_
 		if(foundCode===true){
 			return;
 		}
-		//TODO check this edge case
 		setTitle('unknown');
 	}
 
 	useEffect( () => {
-		fetch(url_backend+'/get_specific_tags?train='+path).then(res => res.json()).then(res => onLoadedTags(res));
+		fetch(url_backend+'/get_specific_tags?path='+path).then(res => res.json()).then(res => onLoadedTags(res));
 	}, []);
 
 	return(
@@ -65,7 +64,7 @@ export default function ImageComponent({height,width,path,pinFunction,color,url_
 						</summary>
 						<TransformWrapper>
 							<TransformComponent>
-								<img alt='zoomable' src={ url_backend + '/get_specific_image?page=' + path.split('/')[0] + '&image='+path.split('/')[1]} style={{width:width*0.196}}/>
+								<img alt='zoomable' src={ url_backend + '/get_specific_image?path=' + path.split('/')[0] + '&image='+path.split('/')[1]} style={{width:width*0.196}}/>
 							</TransformComponent>
 						</TransformWrapper>
 					</details>

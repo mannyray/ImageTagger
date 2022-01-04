@@ -28,10 +28,10 @@ def search_group_by_similarity(tagToImages):
     return res
 
 
-def search_get_specific_tag(train,folderToDictionary):
-    if len(train) == 0:
+def search_get_specific_tag(path,folderToDictionary):
+    if len(path) == 0:
         return []
-    split = train.split("/")
+    split = path.split("/")
     if len(split) == 2:
         return folderToDictionary[split[0]][split[1]] 
     else:

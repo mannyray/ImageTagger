@@ -153,7 +153,7 @@ export default class Tag extends Component {
 					<div style={{ float:'left', display:'flex' }} class="container">
 						<TransformWrapper>
 							<TransformComponent>
-								<img src={this.url_backend+'/get_specific_image?page='+this.state.save_directory+'&image='+this.state.image_viewed[0]} style={{height:this.state.height*0.7}} alt="test" />
+								<img src={this.url_backend+'/get_specific_image?path='+this.state.save_directory+'&image='+this.state.image_viewed[0]} style={{height:this.state.height*0.7}} alt="test" />
 							</TransformComponent>
 						</TransformWrapper>
 						<div style={{ float:'left'  }}>

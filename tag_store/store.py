@@ -5,7 +5,7 @@ import shutil
 from werkzeug.utils import secure_filename
 from flask import send_file
 
-image_store = '/media/stan/Extreme SSD/train_picture'
+image_store = '/media/stan/Extreme SSD/coin_pictures'
 
 folderToDictionary = {}
 tagToImages = {}
@@ -71,6 +71,8 @@ for folder in folders:
     base = os.path.basename(folder)
     if os.path.exists(os.path.join(folder,'data.pkl')):
         res = processPKL(os.path.join(folder,'data.pkl'),base)
+    else:
+        continue
 
     tags_of_folder = res[0]
     folder_to_image_to_tags[base] = tags_of_folder
@@ -97,11 +99,14 @@ def initialize(current_session_path):
     target = os.path.join(image_store,current_session_path)
     if not os.path.isdir(target):
         os.mkdir(target)
-        folder_to_image_to_tags[current_sesion_path] = {}
+    if not current_session_path in folder_to_image_to_tags:
+        folder_to_image_to_tags[current_session_path] = {}
 
 def get_files(current_session_path):
     initialize(current_session_path)
-    files = glob.glob(os.path.join(image_store,current_session_path,'*.JPG'))
+    print("current "+current_session_path)
+    files = glob.glob(os.path.join(image_store,current_session_path,'*.jpg')) + glob.glob(os.path.join(image_store,current_session_path,'*.JPG'))
+    print(files)
     files = [ [os.path.basename(x)] for x in files]
     return files
 
@@ -115,5 +120,4 @@ def save_tags(current_session_path,image_name,tags):
     #TODO update the inverse
 
 def get_image(current_session_path,image_name):
-    print('name:'+ image_name)
     return send_file(os.path.join(image_store,current_session_path,image_name), mimetype='image/jpg')

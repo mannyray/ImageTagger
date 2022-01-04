@@ -34,18 +34,11 @@ def add_tags():
 
 @app.route('/get_specific_image',methods=['GET'])
 def get_specific_image():
-    return store.get_image(request.args.get('page',default='',type=str),request.args.get('image',default='',type=str))
+    return store.get_image(request.args.get('path',default='',type=str),request.args.get('image',default='',type=str))
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #for searching things
 
-
-'''
--- filter by code
--- filter by message
--- filter by unknown
--- filter by img
-'''
 @app.route('/all_tags_and_frequency',methods=['GET'])
 def get_all_tags_and_frequency():
     return jsonify([str(x)+' '+str(store.tagToImages[x]) for x in store.tagToImages])
@@ -57,11 +50,11 @@ def get_all_codes():
 
 @app.route('/get_all_images_for_tag',methods=['GET'])
 def get_all_images_for_tag():
-    return jsonify(search.search_get_all_images_for_tag(request.args.get('page',default='',type=str),store.tagToImages))
+    return jsonify(search.search_get_all_images_for_tag(request.args.get('path',default='',type=str),store.tagToImages))
 
 @app.route('/get_specific_tags',methods=['GET'])
 def get_specific_tag():
-    return jsonify(search.search_get_specific_tag(request.args.get('train',default='',type=str),store.folder_to_image_to_tags))
+    return jsonify(search.search_get_specific_tag(request.args.get('path',default='',type=str),store.folder_to_image_to_tags))
 
 @app.route('/group_by_similarity',methods=['GET'])
 def group_by_similarity():
