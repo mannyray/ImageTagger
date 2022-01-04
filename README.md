@@ -1,10 +1,10 @@
 # ImageTagger
 
-In this repository I implement a locally hosted in-browser tool built using React and Flask that helps sort pictures. Consider the following scenario:
+In this repository I implement a locally hosted in-browser tool built using React and Flask that helps sort pictures. Consider the following example scenario of coin collection as a motivation for the code in this repository.
 
 ### Scenario:
 
-On a regular basis you are taking lots of high resolution pictures and need a way to sort them. The pictures all have a particular theme to them and you are looking to organize them and search through them as you collect more and more. In this repository we will pretend we are coin enthusiasts and every day we are taking a bunch of coin pictures of coins that we have found that day. These coins are in `test_images` directory with each day containing some take pictures (`day_1`, `day_2` and `day_3`).
+On a regular basis you are taking lots of high resolution pictures and need a way to sort them. The pictures all have a particular theme to them and you are looking to organize them and search through them as you collect more and more. In this repository we will pretend we are coin enthusiasts and every day we are taking a bunch of coin pictures of coins that we have found that day. These coins are in `test_images` directory with each day containing some sample pictures (`day_1`, `day_2` and `day_3`).
 
 The coins have
  - A type (Loonie, Twonie, Quarter, Nickel, Dime)
@@ -84,7 +84,7 @@ Upon pressing `Upload` the images are uploaded to `image_store` in backend to fo
 
 On the top right the app specifies the name of the current image viewed, the image's tags (in previous image we have not entered any yet) and how many images we have to tag.
 
-On the bottom of the image we have a `Enter Tag` input field which the cursor is automatically on upon loading the page so we can start typing right away. The input field is modified for quick typing which is explained in the `Reserved Combos`/`Action` table. Most specially about the commands is that saving and navigating across all the images can be done via keyboard. The `Reserved Starting Words` table specifies keywords that are 'special'. These special keywords are specified in `site/src/config.json` and only serve for colour coding as seen in image below:
+On the bottom of the image we have a `Enter Tag` input field which the cursor is automatically on upon loading the page so we can start typing right away. The input field is modified for quick typing which is explained in the `Reserved Combos`/`Action` table. Most special about the commands is that saving and navigating across all the images can be done via keyboard. The `Reserved Starting Words` table specifies keywords that are 'special'. These special keywords are specified in `site/src/config.json` and only serve for colour coding as seen in image below:
 
 ![](test_images/app_demonstration/tags.png)
 
@@ -129,7 +129,4 @@ Code located in `site/src`.
 
 #### Backend
 
-Code located in `tag_store`. The various routes are handled in `tag_store/tag.py` with first half for tagging/storing operations and second half for searching operations. `tag_store/store.py` contains logic for loading up and storing data and is a wrapper (perhaps can be replaced by a database). `tag_store/search.py` contains logic to assist in searching logic.
-
-
-
+Code located in `tag_store`. The various routes are handled in `tag_store/tag.py` with first half for tagging/storing operations and second half for searching operations. `tag_store/store.py` contains logic for loading up and storing data and is a wrapper (perhaps can be replaced by a database). `tag_store/search.py` contains logic to assist in searching.

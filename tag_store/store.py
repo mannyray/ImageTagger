@@ -104,9 +104,7 @@ def initialize(current_session_path):
 
 def get_files(current_session_path):
     initialize(current_session_path)
-    print("current "+current_session_path)
     files = glob.glob(os.path.join(image_store,current_session_path,'*.jpg')) + glob.glob(os.path.join(image_store,current_session_path,'*.JPG'))
-    print(files)
     files = [ [os.path.basename(x)] for x in files]
     return files
 
