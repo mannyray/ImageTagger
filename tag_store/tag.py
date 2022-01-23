@@ -6,7 +6,6 @@ import numpy as np
 import shutil
 import glob
 import search
-import tagging
 import store
 
 app = Flask(__name__)
